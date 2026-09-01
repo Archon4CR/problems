@@ -1,0 +1,1181 @@
+{
+  "problems": [
+    {
+      "id": "01-001",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "DOUBLE-SAT is NP-complete (reduction from SAT)",
+      "difficulty": "easy",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the two problems:\n* **DOUBLE-SAT**: Given as input a boolean formula $\\phi$, does $\\phi$ have at least two satisfying assignments?\n* **SAT**: Given as input a boolean formula $\\phi$, does $\\phi$ have a satisfying assignment?\n\nShow that **DOUBLE-SAT** is NP-complete using a reduction from **SAT**.",
+      "hint": null,
+      "solution": "#### a. $\\text{DOUBLE-SAT} \\in \\text{NP}$\nWe guess a certificate as a truth assignment to the variables $X=\\{X_{1},\\dots,X_{n}\\}$. We can verify if $w$ is true in poly-time, since $\\phi$ has a finite number of clauses.\n\n#### b. Reduction\nWe define a reduction from **SAT** to **DOUBLE-SAT** as follows. For any **SAT** formula $\\phi$, we create a **DOUBLE-SAT** formula $\\phi' = \\phi \\wedge (y \\vee \\neg y)$, where $y$ is a new variable not occurring in $\\phi$. This trivially is done in poly-time.\n\nWe now prove that we have a yes **SAT** instance iff we have a yes **DOUBLE-SAT** instance:\n* If $\\phi$ is satisfiable (we have a yes **SAT** instance), then $\\phi'$ must have at least 2 satisfying assignments: one with $y$ being true and one with $y$ being false.\n* If $\\phi'$ has at least 2 satisfying assignments, then $\\phi$ must be satisfiable (we have a yes **SAT** instance).",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "SAT",
+      "reduction_target": "DOUBLE SAT"
+    },
+    {
+      "id": "01-002",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "Weighted Vertex Cover is NP-complete (reduction from Vertex Cover)",
+      "difficulty": "easy",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the two problems:\n* **Weighted vertex cover (WVC)**: Given a Graph $G=(V,E)$, a positive integer weight $w(v)$ for each vertex $v \\in V$, and an integer $k$, does $G$ have a vertex cover of total weight at most $k$?\n* **Vertex cover (VC)**: Given a Graph $G=(V,E)$, and an integer $k$, does $G$ have a vertex cover of size at most $k$?\n\nShow that **WVC** is NP-complete by reduction from **VC**.",
+      "hint": null,
+      "solution": "We restrict instances of **WVC** to have all weights as 1. This means that we have exactly the **VC** problem. Hence **WVC** is NP-complete, since **WVC** is at least as hard as **VC**, as **WVC** can have arbitrary positive weights.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "VERTEX COVER",
+      "reduction_target": "WEIGHTED VERTEX COVER"
+    },
+    {
+      "id": "01-003",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "CLIQUE is NP-complete (reduction from HALF-CLIQUE)",
+      "difficulty": "easy",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following two problems:\n* **CLIQUE**: Given an undirected graph $G(V,E)$, and an integer $k>0$, does $G$ contain a clique of size $k$?\n* **HALF-CLIQUE**: Given an undirected graph $G(V,E)$, does $G$ contain a clique of size $k=|V|/2$?\n\nShow that **CLIQUE** is NP-complete using a reduction from **HALF-CLIQUE**.",
+      "hint": null,
+      "solution": "Clearly **HALF-CLIQUE** $\\in \\text{NP}$, since an oracle can guess a certificate consisting of a set of $k=|V|/2$ vertices, and we can test if these vertices are fully-connected in time $O(|V|^{2})$.\n\nTo show that **CLIQUE** is NP-complete, we can restrict the instances of our target problem, **CLIQUE**, to cases where $k=|V|/2$ vertices. In this case **CLIQUE** is identical to **HALF-CLIQUE**. Hence it is now trivial to show that yes instances of **CLIQUE** occur iff we have yes instances of **HALF-CLIQUE**.\n\n### OTHER DIRECTION OF REDUCTION\nShow that **HALF-CLIQUE** is NP-complete using a reduction from **CLIQUE**.\n\nWe do this by showing it is in NP, and then showing the necessary reduction.\n\n**HALF-CLIQUE** is in NP, since given a collection of $\\frac{1}{2}|V|$ vertices we can check if they are fully connected in time $O(|V|^{2})$.\n\n**Reduction**: We use **CLIQUE** for our reduction: We assume an instance $(G,k)$ of **CLIQUE** and construct an instance $H$ of **HALF-CLIQUE**.\n\nWe now define a map from pairs $(G,k)$ to graphs $H$ such that $G$ has a clique of size $k$ iff $H$ has a clique of size $\\frac{1}{2}n$ (where $n$, an even number, is the number of nodes in $H$).\n\nWe don't want to delete anything from $G$ as we make $H$, because any part of $G$ might be important in forming a clique of size $k$. So we will make $H$ by adding nodes to $G$.\n\nLet $m$ be the number of nodes in $G$.\n\n1. If $k \\ge \\frac{1}{2}m$, we can make $H$ equal to $G$ plus some number $t$ of new nodes of degree 0. Then $G$ has a clique of size $k$ iff $H$ has a clique of size $k$. We get the desired reduction by making the size of $H$, $n = m + t$, exactly $2k$, so that $k = \\frac{1}{2}n$. This can be done by making $t = 2k - m$, which is possible whenever $k \\ge \\frac{1}{2}m$.\n2. If $k < \\frac{1}{2}m$, we need a different construction. Again we add $t$ new nodes, but now we also add edges from each new node to each other node in the graph, both new and old. Thus any $k$-clique in $G$ combines with the $t$ new nodes to make a $(k+t)$-clique in $H$. (And a $(k+t)$-size clique in $H$ must include at least $k$ old nodes, which form a clique in $G$.) So we need only pick $t$ such that $k+t = (m+t)/2$, or $t = m - 2k$, so that the cliques we seek in $H$ are exactly size $n/2$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "HALF CLIQUE",
+      "reduction_target": "CLIQUE"
+    },
+    {
+      "id": "01-004",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "HALF-CLIQUE is NP-complete (reduction from CLIQUE)",
+      "difficulty": "medium",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following two problems:\n* **CLIQUE**: Given an undirected graph $G(V,E)$, and an integer $k>0$, does $G$ contain a clique of size $k$?\n* **HALF-CLIQUE**: Given an undirected graph $G(V,E)$, does $G$ contain a clique of size $k=|V|/2$?\n\nShow that **HALF-CLIQUE** is NP-complete using a reduction from **CLIQUE**.",
+      "hint": null,
+      "solution": "Clearly **HALF-CLIQUE** $\\in \\text{NP}$, since given a certificate of a subset of vertices we can verify whether they form a clique in time polynomial in $V$ and $E$.\n\nTo show that **HALF-CLIQUE** is NP-complete, we give a reduction from **CLIQUE** to **HALF-CLIQUE**, as follows:\n\nOn input $[G, k]$, where $G$ is a graph on $n$ vertices and $k$ is an integer:\n1. If $k = \\lceil n \\rceil / 2$, then output $G$.\n2. If $k < \\lceil n \\rceil / 2$, then construct a new graph $G'$ by adding a complete graph with $n - 2k$ vertices and connecting them to all vertices in $G$, and output $G'$.\n3. If $k > n/2$, then construct a new graph $G^*$ by adding $2k - n$ isolated vertices to $G$, and output $G^*$.\n\nWe now show that our reduction is correct for each of these 3 cases:\n1. When $k = \\lceil n \\rceil / 2$, it is clear that $[G, k] \\in \\text{CLIQUE}$ if and only if $G \\in \\text{HALF-CLIQUE}$.\n2. When $k < \\lceil n \\rceil / 2$, if $G$ has a $k$-clique, then $G'$ has a clique of size $k + (n - 2k) = (2n - 2k) / 2$, and therefore $G' \\in \\text{HALF-CLIQUE}$ as $G'$ is a graph with $2n - 2k$ vertices. Conversely, if $G' \\in \\text{HALF-CLIQUE}$, that is, if $G'$ has a clique of size $n - k = k + (n - 2k)$, then at most $n - 2k$ of the clique vertices come from the $n - 2k$ new vertices. Therefore the remaining at least $k$ vertices form a clique in $G$, and hence $[G, k] \\in \\text{CLIQUE}$.\n3. When $k > n/2$, if $G$ has a $k$-clique, then $G^*$ has a clique of size $k = 2k/2$ and therefore $G^* \\in \\text{HALF-CLIQUE}$ as $G^*$ is a graph with $n + 2k - n = 2k$ vertices. Conversely, if $G^* \\in \\text{HALF-CLIQUE}$, that is, if $G^*$ has a clique of size $k$, then the clique does not contain any of the new vertices as they are isolated. Thus the clique is a $k$-clique of $G$, and hence $[G, k] \\in \\text{CLIQUE}$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CLIQUE",
+      "reduction_target": "HALF CLIQUE"
+    },
+    {
+      "id": "01-005",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "KNAPSACK is NP-complete (reduction from SUBSET-SUM)",
+      "difficulty": "easy",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following two problems:\n* **KNAPSACK**: Given a set $T$ of items, each with integer value $v$ and integer weight $w$, and integers $W$ and $V$, is there a subset of $T$ of weight no more than $W$, with total value at least $V$?\n* **SUBSET-SUM**: Given a collection $S=\\{s_{1},\\dots,s_{n}\\}$ of integers and a target integer $t$, does a sub-collection of $S$ sum to $t$?\n\nShow that **KNAPSACK** is NP-complete using a reduction from **SUBSET-SUM**.",
+      "hint": null,
+      "solution": "We restrict instances of **KNAPSACK** to have $W=V=t$, and for each item $i$, value $v_i$ equal to weight $w_i = s_i$. In this case **KNAPSACK** is exactly the **SUBSET-SUM** problem, and hence is NP-complete.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "SUBSET SUM",
+      "reduction_target": "KNAPSACK"
+    },
+    {
+      "id": "01-006",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "Class Scheduling is NP-complete (reduction from k-colouring)",
+      "difficulty": "medium",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following problems:\n* **$k$-colouring**: Given a graph $G(V,E)$ and an integer $k < |V|$, can you colour the vertices $V$ with $k$ colours such that no two adjacent vertices have the same colour?\n* **Class scheduling**: Given a set $n$ of classes, each with a time slot $S$, and an integer $k < n$, can you assign the classes to $k$ rooms such that no class has an overlapping time slot?\n\nShow that **Class scheduling** is NP-complete using a reduction from **$k$-colouring**.",
+      "hint": null,
+      "solution": "Clearly **Class scheduling** $\\in \\text{NP}$, since an oracle can guess a certificate consisting of a set of classes, time slots, and rooms, and we can test if these classes can be scheduled in time polynomial in $n$.\n\nWe now show a reduction from **$k$-colouring**, $[G(V,E), k]$ to scheduling, creating a scheduling graph $[G'(V',E'), k]$. For each vertex we create a class. For each edge $(u, v)$ in $G$ (representing adjacent vertices), we define an overlapping time slot between class $u$ and class $v$, which denotes that $u$ and $v$ cannot be scheduled without an overlap. For each colour in $k$-colouring we create a classroom.\n\n* Suppose $G$ has a $k$-colouring. By our construction this means that $G'$ has a schedule of size $k$, since no classes with time conflicts are scheduled in the same room.\n* Suppose that $G'$ has a schedule of size $k$. By our construction, this can only occur if $G$ has a $k$-colouring.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "K-COLORING",
+      "reduction_target": "CLASS SCHEDULING"
+    },
+    {
+      "id": "01-007",
+      "source_file": "01.md",
+      "source_name": "UCC CS4407 (2020) Problem Set: NP-Complete Reductions",
+      "title": "Multi-Path is NP-complete (reduction from SUBSET-SUM)",
+      "difficulty": "medium",
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following two problems:\n* **Multi-Path (MP)**: Given a weighted undirected graph $G(V,E)$, where loops and multiple edges are allowed and the edge weights are positive integers, a specified node $v$, and an integer $k>0$, does there exist a path in $G$ that starts at vertex $v$, never repeats an edge, and returns to $v$ after travelling a distance of exactly $k$?\n* **SUBSET-SUM**: Given a collection $S=\\{s_{1},\\dots,s_{n}\\}$ of integers and a target integer $t$, does a sub-collection of $S$ sum to $t$?\n\nShow that **Multi-Path** is NP-complete using a reduction from **SUBSET-SUM**.",
+      "hint": null,
+      "solution": "#### a. $\\text{MP} \\in \\text{NP}$\nA certificate for this problem is the sequence of edges in the path, which has size $O(|E|)$. It is straightforward to check in polynomial time that no edge is repeated, that the start and end of the path is $v$, and that the total weight of the path is exactly $k$.\n\n#### b. Reduction ($\\text{SUBSET-SUM} \\le_p \\text{MP}$)\nGiven an instance $(S, t)$ of **SUBSET-SUM**, we construct an instance $(G, v, k)$ of **MP** as follows. The multigraph $G$ contains a single vertex $v$. For each element $s_{i} \\in S$, we add a self-edge $e_{i}$ from $v$ to $v$ with weight $s_{i}$. We set the target weight $k$ for **MP** equal to $t$.\n\nWe now show that a yes instance of **SUBSET-SUM** exists iff a yes instance to **MP** exists:\n\n* **Claim 1**: If $(S, t) \\in \\text{SUBSET-SUM}$, then $(G, v, k) \\in \\text{MP}$.\n  \n  If $(S, t) \\in \\text{SUBSET-SUM}$, then there exists a subset of elements $S_{0} = \\{s_{i1},\\dots,s_{ik}\\}$ whose sum is $t$. Consider the path in $G$ that traverses edges $e_{i1},\\dots,e_{ik}$, each exactly once. This is a valid path that starts and ends at $v$, traverses no edge more than once, and, by our choice of edge weights, has total length exactly $t$. **QED**\n\n* **Claim 2**: If $(G, v, k) \\in \\text{MP}$, then $(S, t) \\in \\text{SUBSET-SUM}$.\n  \n  Suppose there exists a suitable path $p$ in $G$ with length $k$. Let the sequence of edges on this path be $\\{e_{1},\\dots,e_{m}\\}$. To each edge $e_{j}$, there corresponds an element $s_{j} \\in S$ such that $w(e_{j}) = s_{j}$. Let $S_{0}$ be the set of all $s_{j}$ corresponding to the edges of $p$. Since no edge is repeated, the sum of all values in $S_{0}$ is exactly $k$, which by construction is equal to $t$. Hence, $(S, t) \\in \\text{SUBSET-SUM}$. **QED**",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "SUBSET SUM",
+      "reduction_target": "MULTI PATH"
+    },
+    {
+      "id": "02-001",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "3SAT ≤p DOUBLE-SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "**Statement:** Show $\\text{DOUBLE-SAT}$ is NP-complete by reduction from $3\\text{-SAT}$.\n\nThe $3\\text{-SAT}$ problem consists of a conjunction of clauses over $n$ Boolean variables, where each clause is a disjunction of 3 literals, e.g.,\n$$(x_{1}\\vee\\neg x_{3}\\vee\\neg x_{5})\\wedge(x_{2}\\vee x_{4}\\vee\\neg x_{6})\\wedge(\\neg x_{3}\\vee\\neg x_{5}\\vee x_{6})$$\n\nThe $\\text{DOUBLE-SAT}$ problem takes as input a Boolean formula $f$, and asks if there are two satisfying assignments for $f$.",
+      "hint": null,
+      "solution": "$\\text{DOUBLE-SAT}$, like any variant of $\\text{SAT}$, is in $\\text{NP}$ since the truth assignment is the certificate; we can check every clause in polynomial time to see if it is satisfied.\n\nWe now show a reduction from $3\\text{-SAT}$. Given a $3\\text{-SAT}$ formula $f$, we construct a $\\text{DOUBLE-SAT}$ formula:\n$$f' = f \\wedge (x_{k} \\vee \\neg x_{k})$$\nwhere $x_k$ is a variable not used in $f$. Clearly this reduction is poly-time.\n\nWe now show that $f$ has a satisfying assignment iff $f'$ has two satisfying assignments.\n\n* **$(\\Rightarrow)$** If $f$ has a satisfying assignment $\\sigma$, then $f'$ has two satisfying assignments, corresponding to $(\\sigma, x_{k} = \\text{true})$ and $(\\sigma, x_{k} = \\text{false})$.\n\nThe clause $(x_k \\vee \\neg x_k)$ can be satisfied with either $x_k$ true or $x_k$ false. In either case, if we have a satisfying assignment $\\sigma$ for $f$, this ensures $\\text{DOUBLE-SAT}$ is validated. In this case, then $3\\text{-SAT}$ is also validated.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "DOUBLE SAT"
+    },
+    {
+      "id": "02-002",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "HAMILTONIAN-CYCLE ≤p DIRECTED-HAMILTONIAN-CYCLE",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "**Statement:** Show $\\text{Directed-HC}$ is NP-complete by reduction from $\\text{Hamilton Cycle}$. The $\\text{Hamilton Cycle}$ ($\\text{HC}$) problem asks if there is a simple cycle that visits every node once in an undirected graph $G(V,E)$.\n\n* **INSTANCE:** For $\\text{Directed-HC}$ we are given as input a directed graph $G'(V,E')$.\n* **QUESTION:** Is there a simple directed cycle that visits every node once?",
+      "hint": null,
+      "solution": "We first must show that $\\text{DHC}$ is in $\\text{NP}$: Given a certificate (path in $G'$) we can check in poly-time if this is Hamiltonian.\n\nWe now demonstrate how to reduce $\\text{HC}$ to $\\text{DHC}$. Let $G=(V,E)$ be the input for $\\text{HC}$. We create a $\\text{DHC}$ graph $G'=(V,E')$ by a reduction operator $T$ that takes each edge in $G$ and replaces it by two edges in $E'$ (one going in each direction). (This is just the standard way in which an undirected graph is converted into a directed graph.) Clearly this reduction takes poly-time.\n\nWe now show that $\\text{HC}$ has a yes answer iff $\\text{DHC}$ has a yes answer.\n\n* **$(\\Rightarrow)$** Assume $G$ has a Hamilton circuit. By our construction, we must have a directed Hamilton circuit in $G'$.\n* **$(\\Leftarrow)$** Assume $G'$ has a directed Hamilton circuit. By our construction, we must have a Hamilton circuit in $G$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "HAMILTONIAN CYCLE",
+      "reduction_target": "DIRECTED HAMILTONIAN CYCLE"
+    },
+    {
+      "id": "02-003",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "SUBSET-SUM ≤p SUBSET-EQUALITY",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that SUBSET-EQUALITY is NP-complete by reduction from SUBSET-SUM.\n\n* **SubSet Sum:** Given a set $S$ of $n$ non-negative integers, does there exist a subset of $k$ of the integers that sums to a value $c$?\n* **SubSet Equality:** Given a set $S$ of $n$ non-negative integers, does there exist a partition of $S$ into $X$ and $Y$ such that the sum of the integers in $X$ equals the sum of the integers in $Y$?",
+      "hint": null,
+      "solution": "$\\text{SubSet Equality}$ is a restriction of $\\text{SubSet Sum}$ to the case where $c = \\frac{1}{2}\\sum_{x\\in S}x$, leading to a partition of $S$ into $X$ and $Y$, each with sum of $c$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "SUBSET SUM",
+      "reduction_target": "SUBSET EQUALITY"
+    },
+    {
+      "id": "02-004",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "3SAT ≤p NAE-3-SAT",
+      "difficulty": "hard",
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "**Statement:** Not-All-Equal Satisfiability ($\\text{NAE-SAT}$) is like $\\text{SAT}$, but must be such that every clause contains at least one true literal and at least one false one. $\\text{NAE-3-SAT}$ is the special case where each clause has exactly 3 literals. Show that $\\text{NAE-3-SAT}$ is NP-complete by reducing $3\\text{-SAT}$ to it.",
+      "hint": null,
+      "solution": "$\\text{NAE-3-SAT}$, like any variant of $\\text{SAT}$, is in $\\text{NP}$ since the truth assignment is the certificate; we can check every clause in polynomial time to see if it is satisfied.\n\nWe now show a reduction from $3\\text{-SAT}$. We define a single \"reference variable\" $z$ for the entire $\\text{NAE-SAT}$ formula. Then we represent each variable $x$ in the $3\\text{-SAT}$ formula $f$ with a variable $y$ in the $\\text{NAE-SAT}$ formula $f'$, where $x$ is true or false if $y_{i}\\neq z$ or $y_{i}=z$ respectively. Then we can represent a $3\\text{-SAT}$ clause $(x_{i}\\vee x_{j}\\vee x_{k})$ with a $\\text{NAE-4-SAT}$ clause $(y_{i}, y_{j}, y_{k}, z)$, since this clause is satisfied if and only if at least one of $y$'s is different from $z$, i.e., if at least one of the $x$'s is true. We can similarly represent $\\neg x_i$ by $\\neg y_i$.\n\nThis shows that $\\text{NAE-4-SAT}$ is NP-complete. To reduce this to $\\text{NAE-3-SAT}$, we use variables $w$ to break each 4-variable clause into two 3-variable ones, just as for $3\\text{-SAT}$:\n$$(y_{i}, y_{j}, y_{k}, z) = (y_{i}, y_{j}, w) \\wedge (\\neg w, y_{k}, z)$$\n\nIt is easy to check that this works, i.e., by setting $w$ appropriately we can satisfy these two $\\text{NAE-3-SAT}$ clauses unless $y_{i}=y_{j}=y_{k}=z$.\n\n#### Alternate Solution:\nRepresent each $x_{i}$ with a pair of variables $y_{i}, z_{i}$, where $x_{i}$ is true if $y_{i} \\neq z_{i}$; that is, $x_{i} = y_{i} \\oplus z_{i}$. Then the $3\\text{-SAT}$ clause $(x_{i}\\vee x_{j}\\vee x_{k})$ becomes a set of four $\\text{NAE-6-SAT}$ clauses:\n1. $(y_{i}, z_{i}, y_{j}, z_{j}, y_{k}, z_{k})$\n2. $(y_{i}, z_{i}, y_{j}, z_{j}, \\neg y_{k}, \\neg z_{k})$\n3. $(y_{i}, z_{i}, \\neg y_{j}, \\neg z_{j}, y_{k}, z_{k})$\n4. $(y_{i}, z_{i}, \\neg y_{j}, \\neg z_{j}, \\neg y_{k}, \\neg z_{k})$\n\nand we break these down into $\\text{NAE-3-SAT}$ clauses as above. If $x_i$, say, is negated, we flip $z$ in each of these clauses.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "NAE-3SAT"
+    },
+    {
+      "id": "02-005",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "NAE-3-SAT ≤p SET-SPLITTING",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "**Statement:** Show that $\\text{Set-Splitting}$ is NP-complete by reducing $\\text{NAE-3-SAT}$ to it. Consider the $\\text{Set-Splitting}$ problem: given a family $F$ of subsets of a finite set $S$, decide whether there exists a partition of $S$ into two subsets $S_{1}, S_{2}$ such that all elements of $F$ are split by this partition, i.e., none of the elements of $F$ is completely in $S_{1}$ or $S_{2}$.",
+      "hint": null,
+      "solution": "$\\text{Set-Splitting}$ is in $\\text{NP}$ since the certificate can be checked in polynomial time to see if it is satisfied.\n\nWe now show a reduction from $\\text{NAE-3-SAT}$. The input to $\\text{NAE-3-SAT}$ is a Boolean function of $m$ clauses $\\{C_{1}, \\dots, C_{m}\\}$ over $n$ variables $\\{x_{1}, \\dots, x_{n}\\}$. We create a $\\text{Set-Splitting}$ instance $(F, S, S_{1}, S_{2})$ as follows:\n\n1. Make the set $S$ contain all the variables in the $\\text{NAE-3-SAT}$ formula and their negations. \n2. The family $F$ of subsets of a finite set $S$ consists of two sub-collections:\n   * **Collection 1:** For each variable-negation pair $((x, \\neg x), (y, \\neg y), \\dots)$, make a subset.\n   * **Collection 2:** For each clause (e.g., $(x_{i}\\vee x_{j}\\vee x_{k})$), make a subset.\n\nWe now show that the set $S$ can be split in the required way if and only if the formula has a truth-value assignment that makes it true.\n\nWe must show that there exists a partition of $S$ into two subsets $S_{1}, S_{2}$ such that all elements of $F$ are split by this partition. One part of the split set corresponds to variables in $S$ that are \"true\", and the other \"false\". Each subset must contain at least one \"true\" variable and one \"false\" variable, which is exactly what the $\\text{NAE-3-SAT}$ problem requires.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "NAE-3SAT",
+      "reduction_target": "SET SPLITTING"
+    },
+    {
+      "id": "02-006",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "CLIQUE ≤p DENSE-SUBGRAPH",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DENSE-SUBGRAPH is NP-complete by reduction from CLIQUE.\n\n* **Dense Subgraph:** Given a graph $G$ and two integers $a$ and $b$, does $G$ have a set of $a$ vertices with at least $b$ edges between them?",
+      "hint": null,
+      "solution": "$\\text{Dense Subgraph}$ can be restricted to the $\\text{CLIQUE}$ problem by specifying that $b = \\frac{1}{2}a(a-1)$, i.e., that the subgraph be a clique (fully-connected).",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CLIQUE",
+      "reduction_target": "DENSE SUBGRAPH"
+    },
+    {
+      "id": "02-007",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "VERTEX-COVER ≤p SET-COVER",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that SET-COVER is NP-complete by reduction from VERTEX-COVER.\n\n### The Set Cover Problem:\n* **INSTANCE:** A set $X=\\{x_{1}, x_{2}, \\dots, x_{n}\\}$ and a collection $S=\\{S_{1}, S_{2}, \\dots, S_{m}\\}$ of subsets of $X$ such that $S$ covers $X$, i.e., $S_{1}\\cup S_{2}\\cup \\dots \\cup S_{m}=X$. A cover set is any sub-collection $C\\subseteq S$ that also covers $X$.\n* **QUESTION:** Given $(X, S, K)$, is there a cover set $C$ of size $\\le K$?",
+      "hint": null,
+      "solution": "First, we argue that $\\text{Set Cover}$ is in $\\text{NP}$, since given a collection of sets $C$, a certifier can efficiently check that $C$ indeed contains at most $k$ elements, and that the union of all sets listed in $C$ does include all elements from the ground set $X$.\n\nWe will now show that $\\text{Vertex Cover} \\le_p \\text{Set Cover}$. Given an instance of $\\text{Vertex Cover}$ (i.e., a graph $G=(V,E)$ and an integer $j$), we will construct an instance of the $\\text{Set Cover}$ problem:\n\n1. Let $X = E$.\n2. We will define $n$ subsets of $X$ as follows: label the vertices of $G$ from $1$ to $n$, and let $S_i$ be the set of edges incident to vertex $i$ (the edges for which vertex $i$ is an end-point). Note that $S_i \\subseteq X$ for all $i$.\n3. Finally, let $k = j$.\n\nThis construction can be done in time that is polynomial in the size of the $\\text{Vertex Cover}$ instance. We now run our black box for the $\\text{Set Cover}$ problem and return the same result it gives.\n\nTo prove that this answer is correct, we simply need to show that the original instance of $\\text{Vertex Cover}$ is a yes instance if and only if the $\\text{Set Cover}$ instance we created is also a yes instance.\n\n* **$(\\Rightarrow)$** Suppose $G$ has a vertex cover of size at most $j$. Let $S$ be such a set of nodes. By our construction, $S$ corresponds to a collection $C$ of subsets of $X$. Since we defined $k=j$, $C$ clearly has at most $k$ subsets. Furthermore, we claim that the sets listed in $C$ cover $X$. To see this, consider any element of $X$. Such an element is an edge $e$ in $G$, and since $S$ is a vertex cover for $G$, at least one of $e$'s endpoints is in $S$. Therefore, $C$ contains at least one of the sets associated with the endpoints of $e$, and by definition, these both contain $e$.\n\n* **$(\\Leftarrow)$** Now suppose there is a set cover $C$ of size $k$ in our constructed instance. Since each set in $C$ is naturally associated with a vertex in $G$, let $S$ be the set of these vertices. $|S|=|C|$ and thus $S$ contains at most $j$ nodes. Furthermore, consider any edge $e$. Since $e$ is in the ground set $X$ and $C$ is a set cover, $C$ must contain at least one set that includes $e$. But by our construction, the only sets that include $e$ correspond to nodes that are endpoints of $e$. Thus, $S$ must contain at least one of the endpoints of $e$.\n\nWe have now shown that our algorithm solves the $\\text{Vertex Cover}$ problem using a black box for the $\\text{Set Cover}$ problem. Since our construction takes polynomial time, and we have shown that $\\text{Set Cover}$ is in $\\text{NP}$, we can conclude that $\\text{Set Cover}$ is NP-Complete.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "VERTEX COVER",
+      "reduction_target": "SET COVER"
+    },
+    {
+      "id": "02-008",
+      "source_file": "02.md",
+      "source_name": "UCC CS4407 (2013) NP-Complete Reductions",
+      "title": "HAMILTONIAN-CYCLE ≤p TSP",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that TSP is NP-complete by reduction from HAMILTONIAN-CYCLE.\n\n### The Traveling Salesman Problem:\n* **INSTANCE:** An $n \\times n$ weighted adjacency matrix $D=(d_{ij})$ of a complete weighted graph on $n$ vertices with integer edge lengths $d_{ij}$, and an integer $K$.\n* **FEASIBLE SOL:** A $\\text{TSP}$ tour is any Hamiltonian cycle in this complete graph.\n* **QUESTION:** Is there a $\\text{TSP}$ tour of length (or distance) $\\le K$?",
+      "hint": null,
+      "solution": "1. It is simple to show that $\\text{TSP} \\in \\text{NP}$. Given a certificate for $\\text{TSP}$, we can show it is correct or not in time $O(|V|^2)$ (or $O(|E|^2)$).\n2. The reduction is as follows: We assume we are input a $\\text{Hamiltonian Cycle}$ instance of a graph $G(V,E)$ and must construct a $\\text{TSP}$ instance $G'(V',E')$ together with a weight function $w(E')$.\n\nGiven a graph $G$ with $n$ vertices, construct a new weighted complete graph $G'$ with the same vertices ($V' = V$) and we add edges $E^*$ such that $E' = E \\cup E^*$. We create the weight function such that:\n$$w(u, v) = \\begin{cases} 1 & \\text{if } (u,v) \\in E \\\\ 2 & \\text{if } (u,v) \\notin E \\end{cases}$$\n\nClearly, this reduction can be done in time polynomial in $G(V,E)$.\n\nWe claim that $G$ has a Hamilton Cycle iff there is a Hamilton Cycle in $G'$ with a total weight of $n$.\n\n* **$(\\Rightarrow)$** Suppose $G$ has a Hamilton Cycle; by our construction this must mean that $G'$ has a TSP tour of cost $n$.\n* **$(\\Leftarrow)$** Now suppose that $G'$ has a TSP tour of cost $n$. By our construction this must mean that $G$ has a Hamilton Cycle, since only edges in $G$ have cost 1 in $G'$.\n\nThe $\\text{Hamilton Cycle}$ problem reduces to the $\\text{Traveling Salesman Problem}$, therefore the $\\text{Traveling Salesman Problem}$ is NP-hard. Since $\\text{TSP}$ is also in $\\text{NP}$, we have thus shown it is NP-complete.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "HAMILTONIAN CYCLE",
+      "reduction_target": "TSP"
+    },
+    {
+      "id": "03-005",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "LONGEST-PATH NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that the problem of deciding whether an unweighted undirected graph has a path of length greater than $k$ is NP-COMPLETE.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "HAMILTONIAN PATH",
+      "reduction_target": "LONGEST PATH"
+    },
+    {
+      "id": "03-006",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "EXACT-COVER-BY-4-SETS NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "The **EXACT-COVER-BY-3-SETS** problem is defined as the following: given a finite set $X$ with $\\vert{}X\\vert{} = 3q$ and a collection $C$ of 3-element subsets of $X$, does $C$ contain an exact cover for $X$, that is, a subcollection $C' \\subseteq C$ such that every element of $X$ occurs in exactly one member of $C'$?\n\nGiven that EXACT-COVER-BY-3-SETS is NP-COMPLETE, show that **EXACT-COVER-BY-4-SETS** is also NP-COMPLETE.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "EXACT COVER BY 3 SETS",
+      "reduction_target": "EXACT COVER BY 4 SETS"
+    },
+    {
+      "id": "03-015",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "PARTITION NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "We already know the following problem is NP-COMPLETE:\n\n> **SUBSET SUM**\n> **Instance:** A finite set $A$ and a \"size\" $s(a) \\in \\mathbb{Z}^+$ for each $a \\in A$, an integer $B$.\n> **Question:** Is there a subset $A' \\subseteq A$ such that $\\sum_{a \\in A'} s(a) = B$?\n\nNow let's consider the following problem:\n\n> **PARTITION**\n> **Instance:** A finite set $A$ and a \"size\" $s(a) \\in \\mathbb{Z}^+$ for each $a \\in A$.\n> **Question:** Is there a subset $A' \\subseteq A$ such that $\\sum_{a \\in A'} s(a) = \\sum_{a \\in A \\setminus A'} s(a)$?\n\nShow that PARTITION is NP-COMPLETE.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "SUBSET SUM",
+      "reduction_target": "PARTITION"
+    },
+    {
+      "id": "03-027",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "PLANAR-3-COLOR NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Using 3COLORABLE and the gadget in figure 33.1 for PLANAR-3-COLOR, prove that the problem of deciding whether a planar graph can be 3-colored is NP-COMPLETE.\n\n<!-- Figure 33.1: Graph $V=\\{v_1,v_2,\\cdots,v_{13}\\},E=\\{(v_1,v_2),(v_2,v_3),(v_1,v_3),(v_4,v_5),(v_5,v_6),(v_4,v_6),(v_7,v_8),(v_8,v_9),(v_7,v_9),(v_{10},v_{11}),(v_{11},v_{12}),(v_{10},v_{12}),(v_2,v_4),(v_5,v_7),(v_8,v_{10}),(v_{11},v_1),(v_{3},v_{13}),(v_{6},v_{13}),(v_{9},v_{13}),(v_{12},v_{13})\\}$ -->",
+      "hint": "show that the gadget can be 3-colored, and then replace any crossings in a planar embedding with the gadget appropriately.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3-COLORING",
+      "reduction_target": "PLANAR 3-COLOR"
+    },
+    {
+      "id": "03-028",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "DEGREE-4-PLANAR-3-COLOR NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Using the previous result and the gadget in figure 33.2 for DEGREE-4-PLANAR-3-COLOR, prove that the problem of deciding whether a planar graph with no vertex of degree greater than four can be 3-colored is NP-COMPLETE.\n\n<!-- Figure 33.2: Graph $V=\\{v_1,v_2,\\cdots,v_8\\},E=\\{(v_1,v_2),(v_1,v_3),(v_2,v_4),(v_3,v_4),(v_2,v_6),(v_3,v_7),(v_4,v_6),(v_4,v_7),(v_2,v_5),(v_3,v_8),(v_5,v_6),(v_6,v_7),(v_7,v_8)\\}$ -->",
+      "hint": "show that you can replace any vertex with degree greater than 4 with a collection of gadgets connected in such a way that no degree is greater than four.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "PLANAR 3-COLOR",
+      "reduction_target": "DEGREE 4 PLANAR 3-COLOR"
+    },
+    {
+      "id": "05-007",
+      "source_file": "05.md",
+      "source_name": "LUMS CS310 Problem Set 10: Complexity Theory",
+      "title": "Problem 7: CLIQUE is NP-complete",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Prove that the clique problem is NP-complete.\n\n* **The Clique Problem:** Given a graph $G$, the clique problem asks to find the largest clique in $G$ (a clique of order $k$ is a complete graph on $k$ vertices).\n\n* **Decision Version:** Given a graph $G$ and an integer $k$, is there a clique of size at least $k$ in $G$?",
+      "hint": "Show that 3SAT is polynomial-time reducible to the Clique problem.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "CLIQUE"
+    },
+    {
+      "id": "05-008",
+      "source_file": "05.md",
+      "source_name": "LUMS CS310 Problem Set 10: Complexity Theory",
+      "title": "Problem 8: Vertex Cover <= Dominating Set",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that DOMINATING-SET is NP-complete by reduction from VERTEX-COVER.\n\nProve that the Vertex Cover problem is polynomial-time reducible to the Dominating Set problem.\n\n* **The Vertex Cover Problem:** Given a graph $G$ and a number $k$, the decision version of the vertex cover problem asks if there is a subset of size at most $k$ in $V(G)$ that covers all edges (i.e., every edge in $G$ intersects the subset).\n\n* **Dominating Set Problem:** Given a graph $G(V, E)$ and a number $k$, the decision version asks if there is a dominating set of size $k$ in $V(G)$. A dominating set is a subset $A \\subseteq V$ such that each vertex is either in $A$ or has a neighbor in $A$.\n\n*Figure 1: Vertex Cover input $G$ transformed to Dominating Set input $G'$*",
+      "hint": "Replace every edge $(u, v)$ in $G$ with a triangle $(u, v, w)$ to form $G'$, where $w \\in G'$ and $w \\notin G$ (see Figure 1).",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "VERTEX COVER",
+      "reduction_target": "DOMINATING SET"
+    },
+    {
+      "id": "05-009",
+      "source_file": "05.md",
+      "source_name": "LUMS CS310 Problem Set 10: Complexity Theory",
+      "title": "Problem 9: 3SAT <= 3-COLORING",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that 3-COLORING is NP-complete by reduction from 3SAT.\n\nProve that 3-SAT problem is polynomial-time reducible to 3-coloring problem.\n\n* **k-Coloring Problem:** Given a graph $G$, is there a coloring of the nodes with $k$ colors such that the endpoints of every edge are colored differently?\n\n*Figure 2: 3-SAT input transformed to 3-coloring input*",
+      "hint": "For every variable $x_i$, create two nodes $x_i$ and $\\overline{x_i}$ and connect them. Make three special nodes $\\{\\text{Base}, \\text{True}, \\text{False}\\}$ and connect them to form a triangle. Now connect every variable node to the Base node, as shown in Figure 2.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "3-COLORING"
+    },
+    {
+      "id": "06-001",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "ACCEPTS SOMETHING FAST",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that ACCEPTS SOMETHING FAST is NP-complete by reduction from any NP language.\n\n**Input:** A deterministic Turing machine $M$ and an integer $t$ given in unary.\n**Question:** Does $M$ accept some input after less than $t$ computation steps?\n\n*Note:* It suffices to consider inputs of length at most $t$, because in $t-1$ computation steps a machine can read at most the first $t$ bits of the input.",
+      "hint": null,
+      "solution": "### Exercise 1.\nTo see that **ACCEPTS SOMETHING FAST** is in NP we use the certificate definition. The certificates of a pair $(M,t) \\in \\text{ACCEPTS SOMETHING FAST}$, are given by the strings $c$ of length at most $t$ that are accepted by $M$ in time less than $t$. On input $(M,t)$ and a certificate $c$, the verifier simulates $M$ during at most $t-1$ computation steps and checks whether $M$ accepts its input. This can be done in time polynomial in $t$ and the representation size of $M$. We conclude that the problem is in NP.\n\nWe now prove that every language reduces to this problem. Let $L$ be a language in NP and $V$ be a polynomial time verifier for $L$. Recall that $V(x,c)$ halts in time polynomial in $|x|$ for all $c$. The reduction from $L$ to **ACCEPTS SOMETHING FAST** is given by the mapping:\n\n$$x \\longrightarrow (M_{x}, q(|x|))$$\n\nwhere $M_{x}$ is a machine that on input $c$ simulates $V(x,c)$, and $q(n)$ is a polynomial that bounds the computation time of $M_{x}$ for all certificates of $x \\in L$ with $|x| = n$. Because $V(x,c)$ runs in time polynomial in $|x|$ we can assume that the polynomial bound $q$ exists.\n\nThe mapping above can be computed in time polynomial in $|x|$. It remains to show that it is indeed a reduction:\n\n$$x \\in L \\iff \\exists c \\; [V(x, c) \\text{ accepts}]$$\n\nBy construction of $M_{x}$ and $q$:\n$M_{x}$ accepts some $c$ of size at most $q(|x|)$ in time $q(|x|)$ $\\iff (M_{x}, q(|x|)) \\in \\text{ACCEPTS SOMETHING FAST}$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "any NP language",
+      "reduction_target": "ACCEPTS SOMETHING FAST"
+    },
+    {
+      "id": "06-002",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "CIRCUIT SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that CIRCUIT SAT is NP-complete by reduction from ACCEPTS SOMETHING FAST.\n\n**Input:** A circuit $\\phi$.\n**Question:** Is $\\phi$ satisfiable, i.e., are there Boolean values $(x_{1}, \\dots, x_{n})$ such that $\\phi(x_{1}, \\dots, x_{n}) = 1$?",
+      "hint": null,
+      "solution": "### Exercise 2.\nClearly this problem is in NP, because the assignments that make $\\phi$ equal to 1 are certificates. To prove completeness we reduce from **ACCEPTS SOMETHING FAST**.\n\nRecall that a machine state is described by a triple in $\\mathbb{Z}_{\\ge0} \\times Q \\times \\Gamma^{\\infty}$, where $Q$ are the control states and $\\Gamma$ is the tape alphabet. Because we are interested in computations that terminate in time less than $t$, we only bother with the first $t$ cells of the tape and describe machine states as elements from $\\mathbb{Z}_{\\ge0} \\times Q \\times \\Gamma^{t}$. The triple can be naturally represented as a concatenation of 3 binary strings.\n\nIt is easy to believe that there exist 3 circuits $I$, $T$, and $H$ of size polynomial in $t$ and the description length of $M$, such that:\n* $I$ maps an input string $x$ to a representation of the start state with input $x$,\n* $T$ maps the representation of a triple $(i, q, \\gamma)$ to the representation of the next state $(j, r, \\delta)$ after a computation step,\n* $H$ maps every representation of an accept state to 1 and all other inputs to 0.\n\nConsider the circuit $\\psi_{M,t}$ given by the concatenation of $I$ with $t$ concatenations of $T$ and $H$. This circuit has size polynomial in $t$ and the representation size of $M$. Moreover, it maps $x$ to 1 if and only if $M$ accepts $x$ in time at most $t$. Hence, the mapping $(M,t) \\mapsto \\psi_{M,t}$ is a polynomial time reduction from **ACCEPTS SOMETHING FAST** to **CIRCUIT SAT**.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "ACCEPTS SOMETHING FAST",
+      "reduction_target": "CIRCUIT SAT"
+    },
+    {
+      "id": "06-003",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "DOUBLE CIRCUIT SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DOUBLE CIRCUIT SAT is NP-complete by reduction from CIRCUIT SAT.\n\n**Input:** A circuit $\\phi$.\n**Question:** Does $\\phi$ have at least two satisfying assignments?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "CIRCUIT SAT",
+      "reduction_target": "DOUBLE CIRCUIT SAT"
+    },
+    {
+      "id": "06-004",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "3CONSTRAINT SATISFIABILITY (3CSAT)",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that 3CSAT is NP-complete by reduction from CIRCUIT SAT.\n\n**Input:** A Boolean function $f(x_{1}, \\dots, x_{m}) = \\bigwedge_{i=1}^{l} g_{i}(y_{i,1}, y_{i,2}, y_{i,3})$ where $g_{i} : \\{0,1\\}^{3} \\rightarrow \\{0,1\\}$ and $y_{i,j} \\in \\{x_{1}, \\dots, x_{m}\\}$.\n**Question:** Is $f$ satisfiable?",
+      "hint": null,
+      "solution": "### Exercise 4.\nWe reduce from **CIRCUIT SAT**. Assume some circuit has $m$ nodes of which $n$ are input nodes. For all nodes that are not input nodes, we create a new variable. Let these variables be $x_{n+1}, x_{n+2}, \\dots, x_{m}$. Given some input values $x_{1}, \\dots, x_{n}$, all values $x_{n+1}, \\dots, x_{m}$ are fixed. Every non-input node $x_{i}$ is computed using the values of at most 2 other nodes, say $x_{j}$ and $x_{k}$, using $\\wedge, \\vee$ or $\\neg$ operations. The condition $x_{i} = x_{j} \\wedge x_{k}$ is equivalent to the requirement $g(x_{i}, x_{j}, x_{k}) = 1$ for some function $g$. Similarly for $x_{j} \\vee x_{k}$. For a negation we can define a function $g$ after adding a 3rd dummy variable ($g$ does not depend on this 3rd variable). The satisfiability of all these requirements, together with the requirement that the variable of the output node equals 1, is equivalent to the satisfiability of the original circuit.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CIRCUIT SAT",
+      "reduction_target": "3CSAT"
+    },
+    {
+      "id": "06-005",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "3SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that 3SAT is NP-complete by reduction from CIRCUIT SAT.\n\n**Input:** A formula $\\phi$ in 3CNF.\n**Question:** Is $\\phi$ satisfiable?",
+      "hint": null,
+      "solution": "### Exercise 5.\nRecall that a formula in 3CNF is a formula of the form:\n\n$$\\phi(x_{1}, \\dots, x_{m}) = \\bigwedge_{i=1}^{l} (y_{i,1} \\vee y_{i,2} \\vee y_{i,3})$$\n\nwith $y_{i,k} \\in \\{x_{1}, \\bar{x}_{1}, \\dots, x_{m}, \\bar{x}_{m}\\}$ for $i = 1, \\dots, l$ and $k = 1, 2, 3$. The disjunctions $y_{i,1} \\vee y_{i,2} \\vee y_{i,3}$ are called clauses of $\\phi$. We use the observation that every Boolean function with inputs of length $k$ can be written as $2^{k}$ conjunctions of $k$ disjunctions. Afterwards, we apply this for $k=3$.\n\nLet $w$ be a string of length $k$, let $\\text{not}^{0} x_{i} = x_{i}$ and let $\\text{not}^{1} x_{i} = \\bar{x}_{i}$.\n\n$$(\\text{not}^{w_{1}} x_{1}) \\vee \\dots \\vee (\\text{not}^{w_{k}} x_{k}) = 1_{x \\ne w} = \\begin{cases} 0 & x = w \\\\ 1 & \\text{otherwise} \\end{cases}$$\n\nThus any Boolean function $h$ can be written as:\n\n$$h(x) = \\min \\{ 1_{x \\ne w} : h(w) = 0 \\} = \\bigwedge_{w: h(w)=0} ((\\text{not}^{w_{1}} x_{1}) \\vee \\dots \\vee (\\text{not}^{w_{k}} x_{k}))$$",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CIRCUIT SAT",
+      "reduction_target": "3SAT"
+    },
+    {
+      "id": "06-006",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "NOT-ALL-EQUAL 3SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that NOT-ALL-EQUAL 3SAT is NP-complete by reduction from 3SAT.\n\nA not-all-equal assignment of a formula in CNF (or 3CNF) is an assignment for which every clause contains at least 1 true literal and at least 1 false literal.\n\n**Input:** A formula $\\phi$ in 3CNF.\n**Question:** Does $\\phi$ have a not-all-equal assignment?",
+      "hint": "Let $y$ be a new variable. First reduce 3SAT to NOT-ALL-EQUAL 4SAT by adding $y$ to every clause.",
+      "solution": "### Exercise 6.\nLet $\\phi$ be a formula in 3CNF. Let $f(\\phi)$ be the formula in 4CNF obtained by adding $y$ to every clause. We show that $f$ is a reduction from 3SAT to NOT-ALL-EQUAL 4SAT. Suppose $\\phi$ is satisfiable, then this assignment together with $y=0$ is an assignment in which every clause has 2 different literals. Suppose that $f(\\phi)$ has an assignment in which every clause has 2 different literals. Note that if each variable is negated, we also obtain such an assignment. Hence, there is such an assignment in which $y=0$. For this assignment, every clause has a true literal, hence $\\phi$ is satisfiable. Thus $3SAT \\le_{p} \\text{NOT-ALL-EQUAL 4SAT}$.\n\nNow we reduce NOT-ALL-EQUAL 4SAT to NOT-ALL-EQUAL 3SAT. We map each clause of size 4 to 2 clauses of size 3 using a new variable $a$:\n\n$$l_{1} \\vee l_{2} \\vee l_{3} \\vee l_{4} \\longrightarrow (l_{1} \\vee l_{2} \\vee a) \\wedge (\\bar{a} \\vee l_{3} \\vee l_{4})$$\n\n(A formula in 4CNF with $m$ clauses and $n$ variables is mapped to a formula in 3CNF with $2m$ clauses and $n+m$ variables.)\n\nWe show that this mapping is a reduction. Given a not-all-equal assignment for the formula in 4CNF, we need to create a not-all-equal assignment for the formula in 3CNF. For this we need to fix the value of the variable $a$ corresponding to each clause $l_{1} \\vee l_{2} \\vee l_{3} \\vee l_{4}$. This is done as follows. If $l_{1} = l_{2}$ we choose $a$ to be the opposite of this value. If $l_{3} = l_{4}$ we choose $a$ equal to this value. Otherwise, the value of $a$ is not important. If $l_{1} \\vee l_{2} \\vee l_{3} \\vee l_{4}$ has two different values, then both clauses have 2 different values.\n\nNow assume that for every assignment of the 4CNF formula there is a clause whose values are all equal. Then it is easy to see that 1 of the 2 corresponding clauses in the 3CNF formula must have all equal values, regardless of the choice of $a$. Thus $\\text{NOT-ALL-EQUAL 4SAT} \\le_{p} \\text{NOT-ALL-EQUAL 3SAT}$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "NAE-3SAT"
+    },
+    {
+      "id": "06-007",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "1-IN-3 SAT",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that 1-IN-3 SAT is NP-complete by reduction from 3SAT.\n\n**Input:** A formula $\\phi$ in 3CNF.\n**Question:** Does $\\phi$ have a satisfying assignment so that every clause contains exactly one true literal.",
+      "hint": "Reduce from 3SAT. Create for every clause 8 new variables $y_{000}, y_{001}, \\dots, y_{111}$ and reduce 3SAT to 1-IN-AT-MOST-7 SAT. The idea is that precisely 1 of these new variables should be true for each assignment of the clause.",
+      "solution": "### Exercise 7.\nFor every clause $l_{1} \\vee l_{2} \\vee l_{3}$ we create 8 new variables $y_{000}, y_{001}, \\dots, y_{111}$. The idea is that an assignment of the first clause corresponds to an assignment where all these $y$-variables are 0 except for $y_{l_{1}l_{2}l_{3}}$.\n\nThis is done as follows. A clause $l_{1} \\vee l_{2} \\vee l_{3}$ is mapped to 7 clauses. The first clause contains all new variables except $y_{000}$:\n\n$$y_{001} \\vee y_{010} \\vee y_{100} \\vee y_{011} \\vee y_{101} \\vee y_{110} \\vee y_{111}$$\n\nThe next 2 clauses use the literal $l_{1}$:\n\n$$l_{1} \\vee y_{000} \\vee y_{001} \\vee y_{010} \\vee y_{011}$$\n$$\\bar{l}_{1} \\vee y_{100} \\vee y_{101} \\vee y_{110} \\vee y_{111}$$\n\nWe add 2 similar clauses both for the literal $l_{2}$ and $l_{3}$.\n\nIf $l_{1} \\vee l_{2} \\vee l_{3}$ is true, then by setting the variable $y_{l_{1}l_{2}l_{3}}$ true and all others false, each of the 7 clauses contains precisely 1 true literal. Oppositely, if each clause contains precisely 1 true literal, then precisely 1 of the variables from the first clause must be true, and by the 6 other clauses, this variable must be consistent with the values of $l_{1}, l_{2}$ and $l_{3}$. This implies that $l_{1} \\vee l_{2} \\vee l_{3}$ is true.\n\nNow in a similar way as in the previous exercise, we can make the clauses smaller by adding new variables.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "1-IN-3 SAT"
+    },
+    {
+      "id": "06-008",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "0-1 INTEGER PROGRAMMING",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that 0-1 INTEGER PROGRAMMING is NP-complete by reduction from 3SAT.\n\n**Input:** A matrix $A \\in \\mathbb{Z}^{m \\times n}$ and a vector $b \\in \\mathbb{Z}^{m}$.\n**Question:** Is there an $x \\in \\{0,1\\}^n$ such that $A x \\le b$?",
+      "hint": "Reduce from 3SAT.",
+      "solution": "### Exercise 8.\nWe map every clause $l_{1} \\vee l_{2} \\vee l_{3}$ in a formula in 3CNF to a linear equation $l_{1} + l_{2} + l_{3} \\ge 1$ by rewriting negative literals $l_{i} = \\bar{x}_{i}$ as $1 - x_{i}$. In this way, the set of clauses in $\\phi$ is mapped to a system of linear equations. An assignment with $x_{i} \\in \\{0,1\\}$ is a solution of the system if and only if every clause contains a true literal.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "0-1 INTEGER PROGRAMMING"
+    },
+    {
+      "id": "06-009",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "BINARY QUADRATIC PROGRAMMING",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that BINARY QUADRATIC PROGRAMMING is NP-complete by reduction from 3SAT.\n\n**Input:** A matrix $A \\in \\{0,1\\}^{n \\times n \\times n}$ and a vector $b \\in \\{0,1\\}^{n}$.\n**Question:** Is there an $x \\in \\{0,1\\}^{n}$ such that $\\sum_{i=1}^{n} \\sum_{j=1}^{n} A_{i,j,k} x_{i} x_{j} = b_{k} \\pmod 2$?",
+      "hint": "Reduce from 3SAT and use that $u \\vee v = u + v - uv$ for $u, v \\in \\{0,1\\}$ and $u^{2} = u$.",
+      "solution": "### Exercise 9.\nAgain we map negative literals $l_{i} = \\bar{x}_{i}$ to terms $1 - x_{i}$. The requirement that a clause $l_{1} \\vee l_{2} \\vee l_{3}$ is true is equivalent to:\n\n$$\\begin{aligned}\nl_{1} \\vee l_{2} &= a \\iff l_{1} + l_{2} - l_{1}l_{2} = a \\\\\na \\vee l_{3} &= 1 \\iff a + l_{3} - al_{3} = 1\n\\end{aligned}$$\n\nAfter expanding (the negations) we obtain a set of quadratic equations and we use the equality $u^{2} = u$ to remove all linear terms. By construction an assignment makes $\\phi$ true if and only if it is a solution of the equations.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "BINARY QUADRATIC PROGRAMMING"
+    },
+    {
+      "id": "06-010",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "WINNABLE SOLITAIRE GAME",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that WINNABLE SOLITAIRE GAME is NP-complete by reduction from 3SAT.\n\n*(This is Ex. 7.28 in Sipser's book.)* In the following solitaire game, you are given an $m \\times m$ board. On each of its $m^{2}$ positions lies either a blue stone, a red stone, or nothing at all. You play by removing stones from the board. You win if each column contains only stones of a single color and each row contains at least one stone.\n\n**Input:** An initial configuration of the solitaire game.\n**Question:** Is it possible to win the game?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "WINNABLE SOLITAIRE GAME"
+    },
+    {
+      "id": "06-011",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "AUTOMATON REJECTS SOME SMALL STRING",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that AUTOMATON REJECTS SOME SMALL STRING is NP-complete by reduction from 3SAT.\n\n**Input:** An NFA $M$ and an integer $n$ in unary.\n**Question:** Is there a string of length $n$ that is rejected by $M$?\n\n*Note:* It is not trivial that this problem is in NP.",
+      "hint": "Reduce from 3SAT. For each formula $\\phi(x_{1}, \\dots, x_{n})$ build an automaton that has an assignment $w_{1} w_{2} \\dots w_{n}$ as input and accepts if $\\phi(w_{1}, \\dots, w_{n})$ is false.",
+      "solution": "### Exercise 11.\nThe certificates are given by strings of length at most $n$ that are rejected by $M$. The verifier runs the algorithm discussed in the first lecture notes (also known as the finger algorithm).\n\nTo reduce 3SAT to this problem, consider a formula in 3CNF with $n$ variables and $l$ clauses. Every assignment is represented by an $n$-bitstring and these strings correspond to inputs for the automaton. First we build for each clause a machine that accepts all strings in which the clause is false. Each such machine can be constructed using at most $2(n+1)$ states. Then we take the union of all these automata. The union is taken using some nondeterministic splitting in the start node with $\\epsilon$-edges. We obtain an automaton $M$ with at most $2l(n+1)$ states. By construction, this automaton accepts every assignment that makes the formula false, but rejects an assignment that makes the formula true.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "AUTOMATON REJECTS SOME SMALL STRING"
+    },
+    {
+      "id": "06-012",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "DIFFERENT FINITE REGULAR LANGUAGES",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DIFFERENT FINITE REGULAR LANGUAGES is NP-complete by reduction from AUTOMATON REJECTS SOME SMALL STRING.\n\n**Input:** NFAs $K$ and $M$.\n**Question:** Do $K$ and $M$ recognize finite languages and are these languages different?",
+      "hint": "The hardest part of the exercise is to show that this problem is in NP. First observe that automata recognizing finite languages are essentially cycle free. For the reduction, use that the problem in exercise 11 remains NP-hard if we additionally require that $M$ rejects all strings of length different from $n$.",
+      "solution": "### Exercise 12.\nNote that if a nondeterministic automaton has a state from which there exists no path to an accept state, then we can remove this state without changing the language recognized by the automaton. Assume that from every state of some automaton there exists a path to an accept state. This automaton recognizes a finite language if and only if it has no cycles.\n\nThe certificates (that show that the 2 automata are different) are given by the strings that are rejected by one automaton and accepted by the other, together with a bit that indicates which automaton accepts and rejects. The verifier first checks that $K$ and $M$ recognize finite languages using the property described above. Then it checks that the indicated automaton accepts the string. Finally it uses the finger algorithm from our lectures about automata to check that the other automaton rejects the string.\n\nBecause the automata in the language are equivalent to some cycle free automata, the maximal length of an accepted string is bounded by the number of states. Hence, the certificate has polynomial size, and all checks executed by the verifier can be done in polynomial time.\n\nTo show completeness, we use the previous problem with the additional condition that $M$ rejects all strings whose length differs from $n$. The reduction in the previous problem can easily be assumed to satisfy this additional condition. Let machine $K_{n}$ be the machine that accepts precisely the strings of length $n$. The mapping $(M,n) \\mapsto (K_{n}, M)$ is a reduction from Exercise 11 to this problem.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "AUTOMATON REJECTS SOME SMALL STRING",
+      "reduction_target": "DIFFERENT FINITE REGULAR LANGUAGES"
+    },
+    {
+      "id": "06-013",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "CONTAINS PARTITION",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that CONTAINS PARTITION is NP-complete by reduction from 1-IN-3 SAT.\n\nA partition of a set $U$ is a collection of sets $S_{1}, \\dots, S_{e} \\subseteq U$ that are pairwise disjoint such that $\\bigcup_{i=1}^{e} S_{i} = U$.\n\n**Input:** A set $U$ and a collection $C$ of subsets of $U$.\n**Question:** Is there a subcollection $C' \\subseteq C$ that is a partition of $U$?",
+      "hint": null,
+      "solution": "### Exercise 13.\nWe reduce from **1-IN-3 SAT**. Let $\\phi$ be a formula in 3CNF with variables $x_{1}, \\dots, x_{n}$ and clauses $c_{1}, \\dots, c_{l}$. We choose:\n\n$$U = \\{v_{1}, v_{2}, \\dots, v_{n}, c_{1}, \\dots, c_{l}\\}$$\n\nWe say that the literal $l$ appears in a clause $c$ if $c = l_{1} \\vee l_{2} \\vee l_{3}$ and $l \\in \\{l_{1}, l_{2}, l_{3}\\}$. We define $2n$ subsets $S_{l}$:\n\n$$\\begin{aligned}\nS_{x_{i}} &= \\{v_{i}\\} \\cup \\{c_{j} : x_{i} \\text{ appears in } c_{j}\\} \\\\\nS_{\\bar{x}_{i}} &= \\{v_{i}\\} \\cup \\{c_{j} : \\bar{x}_{i} \\text{ appears in } c_{j}\\}\n\\end{aligned}$$\n\nWe prove that the mapping $\\phi \\mapsto (U, \\{S_{x_{1}}, S_{\\bar{x}_{1}}, \\dots, S_{x_{n}}, S_{\\bar{x}_{n}}\\})$ is a polynomial time reduction. Clearly the pair has a polynomial representation size and can be computed in polynomial time. Suppose $\\phi$ has a 1-in-3 assignment $x_{1}, \\dots, x_{n}$. Then the collection:\n\n$$\\mathcal{P}_{x} = \\{S_{l} : \\text{assignment makes literal } l \\text{ true}\\}$$\n\nis a partition of $U$. Indeed, for each $i$:\n* Each element $v_{i}$ appears only in the sets $S_{x_{i}}$ and $S_{\\bar{x}_{i}}$ and we selected precisely 1 of these sets.\n* Each element $c_{j}$ only appears in 3 sets $S_{l}$ given by the literals of $c_{j}$. Because $\\phi$ is a 1-in-3 assignment, precisely 1 such literal is true and precisely one such set $S_{l}$ appears in $\\mathcal{P}_{x}$.\n\nAssume the collection contains a partition $\\mathcal{P}$. Then for each $i \\le n$, only the sets $S_{x_{i}}$ and $S_{\\bar{x}_{i}}$ contain $v_{i}$ and therefore, precisely 1 of them belongs to $\\mathcal{P}$. Let $x_{i}=1$ if $S_{x_{i}} \\in \\mathcal{P}$ and $x_{i}=0$ otherwise. In other words, we assign the variables such that any literal $l$ is true if and only if $S_{l} \\in \\mathcal{P}$. Because every variable $c_{j}$ appears in precisely one set $S_{l}$, every clause contains precisely 1 true variable. In conclusion, $\\phi$ is a 1-in-3 assignment and the mapping above is a reduction.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "1-IN-3 SAT",
+      "reduction_target": "CONTAINS PARTITION"
+    },
+    {
+      "id": "06-014",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "SUBSET SUM",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that SUBSET SUM is NP-complete by reduction from CONTAINS PARTITION.\n\n**Input:** $X \\subseteq \\mathbb{Z}$ and $k \\in \\mathbb{Z}$.\n**Question:** Does there exist a subset $I \\subseteq X$ such that $\\sum_{i \\in I} i = k$?",
+      "hint": "Reduce from CONTAINS PARTITION by considering expansions of natural numbers in some base.",
+      "solution": "### Exercise 14.\nWe reduce from **CONTAINS PARTITION**. Let $b$ be the number of sets in $C$ plus 1. (In fact the plus 1 is not needed, but it simplifies the argument.) Assume $U = \\{0, 1, \\dots, |U|-1\\}$. To each set $S \\in C$ we associate the integer $x_{S} = \\sum \\{b^{u} : u \\in S\\}$. Thus the expansion of $x_{S}$ in base $b$ contains only 0s and 1s, and 1s only appear precisely at the positions $u \\in S$. We choose $k = \\sum_{i=0}^{|U|-1} b^{i}$.\n\nNote that if we add at most $b-1$ numbers $x_{S}$ using the expansion in base $b$, each $u$-th digit equals the sum of the $u$-th digits of the numbers (we never carry anything to the next digit). Hence, the set $\\{x_{S} : S \\in C\\}$ contains a subset with sum $k$ if and only if $C$ contains a partition of $U$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CONTAINS PARTITION",
+      "reduction_target": "SUBSET SUM"
+    },
+    {
+      "id": "06-016",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "DISJOINT SETS",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DISJOINT SETS is NP-complete by reduction from 1-IN-3 SAT.\n\n**Input:** A collection $C$ of sets and a number $k$.\n**Question:** Are there $k$ sets in $C$ that are pairwise disjoint?",
+      "hint": "Reduce from 1-IN-3 SAT in a similar way as the problem CONTAINS PARTITION.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "1-IN-3 SAT",
+      "reduction_target": "DISJOINT SETS"
+    },
+    {
+      "id": "06-017",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "INDEPENDENT SET",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that INDEPENDENT SET is NP-complete by reduction from CLIQUE.\n\n**Input:** A graph $G = (V, E)$ and an integer $k$.\n**Question:** Is there a subset $U \\subseteq V$ of $k$ vertices that are pairwise unconnected, i.e., $(U \\times U) \\cap E$ is empty?",
+      "hint": null,
+      "solution": "### Exercise 17.\nConsider the inverse graph $\\bar{G} = (V, \\bar{E})$, where $\\bar{E} = (V \\times V) \\setminus E$. This graph has an independent set of size $k$ if and only if $(V, E)$ has a clique of size $k$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "CLIQUE",
+      "reduction_target": "INDEPENDENT SET"
+    },
+    {
+      "id": "06-018",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "VERTEX COVER",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that VERTEX COVER is NP-complete by reduction from INDEPENDENT SET.\n\nA vertex cover of a graph $G$ is a subset $S$ of vertices of $G$ such that each edge of $G$ has at least one endpoint in $S$.\n\n**Input:** A graph $G$ and an integer $k$.\n**Question:** Does $G$ have a vertex cover of size at most $k$?",
+      "hint": null,
+      "solution": "### Exercise 18.\nWe reduce from **INDEPENDENT SET**. Note that if $U \\subseteq V$ is an independent set, then $V \\setminus U$ is a vertex cover. Hence, $(V, E)$ has an independent set of size at least $k$ if and only if $(V, E)$ has a vertex cover of size at most $|V|-k$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "INDEPENDENT SET",
+      "reduction_target": "VERTEX COVER"
+    },
+    {
+      "id": "06-019",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "SET COVER",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that SET COVER is NP-complete by reduction from VERTEX COVER.\n\n**Input:** A set $E$, a list $S_{1}, \\dots, S_{m}$ of subsets of $E$ and an integer $k$.\n**Question:** Are there $k$ sets in the list whose union equals $E$?",
+      "hint": null,
+      "solution": "### Exercise 19.\nWe reduce from **VERTEX COVER**. Consider a graph $(V, E)$ and an integer $k$. For each $v \\in V$, let $S_{v} \\subseteq E$ be the set of edges that are incident on $v$. Let $C = \\{S_{v} : v \\in V\\}$. We can cover $E$ with at most $k$ sets $S_{v}$ if and only if $(V, E)$ has a vertex cover of size at most $k$.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "VERTEX COVER",
+      "reduction_target": "SET COVER"
+    },
+    {
+      "id": "06-020",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "SET PACKING",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that SET PACKING is NP-complete by reduction from INDEPENDENT SET.\n\n**Input:** A set $E$, a list $S_{1}, \\dots, S_{m}$ of subsets of $E$ and an integer $k$.\n**Question:** Are there $k$ sets in the list that are pairwise disjoint?",
+      "hint": null,
+      "solution": "### Exercise 20.\nWe reduce from **INDEPENDENT SET**. Let $(V, E)$ be a graph. For every $v \\in V$, let $S_{v}$ be the set of edges that are incident on $v$. $U$ is an independent set if and only if the sets $S_{u}$ and $S_{v}$ are disjoint for all $u, v \\in U$ ($u \\ne v$).",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "INDEPENDENT SET",
+      "reduction_target": "SET PACKING"
+    },
+    {
+      "id": "06-021",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "PATH WITH FORBIDDEN PAIRS",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that PATH WITH FORBIDDEN PAIRS is NP-complete by reduction from 3SAT.\n\n**Input:** A graph $G = (V, E)$, vertices $s, t \\in V$ and a set of pairs $(u_{1}, v_{1}), \\dots, (u_{e}, v_{e}) \\in V \\times V$.\n**Question:** Does there exist a path from $s$ to $t$ that visits at most one vertex of each pair $(u_{i}, v_{i})$?\n**Hint:** See the gadgets below.\n\n<!-- Figure: Variable Gadget (Left): Labeled \"variable\", it consists of a diamond-shaped graph with two unlabeled side vertices connected to a top vertex labeled $x_i$ and a bottom vertex labeled $\\bar{x}_i$. Clause Gadget (Right): Labeled \"clause $x_i \\land x_j \\land \\bar{x}_k$\", it consists of two unlabeled side vertices connected through three parallel paths containing literal vertices labeled $x_i$, $x_j$, and $\\bar{x}_k$. -->",
+      "hint": "See the gadgets below.",
+      "solution": "### Exercise 21.\nWe concatenate gadgets for all variables followed by gadgets for all clauses. The leftmost node is $s$ and the rightmost node is $t$. The list of forbidden pairs of nodes is given by all pairs $(u, v)$ that are labeled with opposite literals, i.e., by $(x_{i}, \\bar{x}_{i})$ or $(\\bar{x}_{i}, x_{i})$.\n\n<!-- Figure: Variable Gadgets (Left to Middle): A series of $n$ chained diamond gadgets starting at source node $s$, corresponding to variables $x_1, x_2, \\dots, x_n$. Each variable gadget contains a pair of nodes labeled with the variable and its negation ($x_i$ and $\\bar{x}_i$). Clause Gadgets (Middle to Right): A sequence of $m$ chained clause gadgets ending at sink node $t$, corresponding to clauses $C_1, \\dots, C_m$. Each clause gadget consists of two shared endpoints connected via three parallel paths, representing the three literal nodes $\\ell_{j,1}, \\ell_{j,2}, \\ell_{j,3}$ of clause $j$. -->",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "PATH WITH FORBIDDEN PAIRS"
+    },
+    {
+      "id": "06-022",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "DIRECTED HAMILTONIAN PATH",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DIRECTED HAMILTONIAN PATH is NP-complete by reduction from 3SAT.\n\n**Input:** A directed graph $G = (V, E)$, and vertices $s, t \\in V$.\n**Question:** Is there a path from $s$ to $t$ that visits all nodes in $V$ exactly once?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3SAT",
+      "reduction_target": "DIRECTED HAMILTONIAN PATH"
+    },
+    {
+      "id": "06-023",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "HAMILTONIAN PATH",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that HAMILTONIAN PATH is NP-complete by reduction from DIRECTED HAMILTONIAN PATH.\n\n**Input:** An (undirected) graph $G = (V, E)$, and vertices $s, t \\in V$.\n**Question:** Is there a path from $s$ to $t$ that visits all nodes in $V$ exactly once?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "DIRECTED HAMILTONIAN PATH",
+      "reduction_target": "HAMILTONIAN PATH"
+    },
+    {
+      "id": "06-024",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "DIRECTED HAMILTONIAN CYCLE",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that DIRECTED HAMILTONIAN CYCLE is NP-complete by reduction from DIRECTED HAMILTONIAN PATH.\n\nA cycle in a graph is a path for which the start and end nodes are equal.\n\n**Input:** A directed graph $G = (V, E)$.\n**Question:** Is there a cycle that visits all nodes in $V$ exactly once?",
+      "hint": null,
+      "solution": "### Exercise 24.\nIn the reduction from 3SAT to DIRECTED HAMILTONIAN PATH from Sipser's book, node $s$ only has outgoing edges and $t$ has only incoming edges. We can simply add an edge from $t$ to $s$ to obtain a graph with a Hamiltonian cycle. Note that this edge belongs to every Hamiltonian cycle, because for each node it contains an incoming and outgoing edge.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "DIRECTED HAMILTONIAN PATH",
+      "reduction_target": "DIRECTED HAMILTONIAN CYCLE"
+    },
+    {
+      "id": "06-025",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "HAMILTONIAN CYCLE",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "**Input:** An (undirected) graph $G = (V, E)$.\n**Question:** Is there a cycle that visits all nodes in $V$ exactly once?\n\nThis problem is perhaps the most cited NP-complete problem in the popularizing literature.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "HAMILTONIAN PATH",
+      "reduction_target": "HAMILTONIAN CYCLE"
+    },
+    {
+      "id": "06-026",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "TRAVELLING SALESMAN",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that TRAVELLING SALESMAN is NP-complete by reduction from HAMILTONIAN CYCLE.\n\n**Input:** A list of all pairwise distances between $n$ points and an integer $k$.\n**Question:** Is there a cycle of length at most $k$ that contains all points?\n  In other words, is there a list $p_{1}, p_{2}, \\dots, p_{m}$ containing all points at least once such that $d(p_{1}, p_{2}) + \\dots + d(p_{n-1}, p_{n}) + d(p_{m}, p_{1}) \\le k$.\n\nFor simplicity of the exercise, we do not require that the distances satisfy the conditions of a metric.",
+      "hint": null,
+      "solution": "### Exercise 26.\nWe reduce from **HAMILTONIAN CYCLE**. Consider a graph $G = (V, E)$. The list of points is given by the vertices $V$, and the distances are given by:\n\n$$d_{G}(u,v) = \\begin{cases} 1 & \\text{if } (u,v) \\in E \\\\ 2 & \\text{otherwise} \\end{cases}$$\n\nThe mapping $G \\mapsto (d_{G}, k)$ with $k = |V|$ is a reduction. Indeed, a Hamiltonian cycle contains precisely $|V|$ edges and the length according to $d_{G}$ is therefore $|V|$. On the other hand, if there is a cycle with $d_{G}$-length equal to $|V|$ that visits $|V|$ nodes, then the $d_{G}$-length is the sum of $|V|$ distances. The minimal value of a term in this sum is 1, hence, all distances in the cycle must be 1, which means that all subsequent pairs are edges from the graph.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "HAMILTONIAN CYCLE",
+      "reduction_target": "TSP"
+    },
+    {
+      "id": "06-027",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "3COLORABLE",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that 3COLORABLE is NP-complete by reduction from NOT-ALL-EQUAL 3SAT.\n\nA coloring of a graph is an assignment of colors to nodes such that no two connected nodes have the same color.\n\n**Input:** A graph $G$.\n**Question:** Is $G$ colorable with 3 colors?\n**Hint:** Let the 3 colors be T, F and N. Interpret the first as True and False, and represent them on a palette.\n\n<!-- Figure: Palette (Left): A triangle of three mutually connected nodes labeled T, F, and N. Variable (Middle): Labeled \"variable\", consisting of a pair of connected nodes labeled $x_i$ and $\\bar{x}_i$, which are both connected to node N in the palette via dashed lines. Clause (Right): Labeled \"a clause\", depicted as a triangle of three connected literal nodes labeled $x_i$, $x_j$, and $\\bar{x}_k$. -->",
+      "hint": "Let the 3 colors be T, F and N. Interpret the first as True and False, and represent them on a palette.",
+      "solution": "### Exercise 27.\nWe reduce from **NOT-ALL-EQUAL 3SAT**. Consider a formula in 3CNF. We construct a graph $G_{\\phi}$ that has 3 parts:\n* **The palette**, as indicated in the hint (nodes $T, F, N$).\n* **Variable gadgets:** For each variable $x_{i}$, create two nodes labeled $x_{i}$ and $\\bar{x}_{i}$. Connect both nodes to the $N$-node of the palette.\n* **Clause gadgets:** For each clause, create a triangle and label the nodes by the literals of the clause. Connect each node with the node in the variable gadget labeled by the negated literal.\n\nClearly this graph can be built in polynomial time. It remains to show that $\\phi \\mapsto G_{\\phi}$ is a reduction.\n\nAssume that formula $\\phi$ has a not-all-equal assignment. We need to color $G_{\\phi}$. We use colors T, F, and N. First color the palette. Then color the variable gadgets: nodes labeled by true literals are colored with T and for the false ones we use F. Finally, we color the clause gadgets. In every clause we pick a true and a false literal and color the corresponding nodes with T and F respectively. The 3rd node of the gadget is colored with N. Because nodes in variable and clause gadgets are only connected to nodes labeled by opposite literals, this is indeed a valid coloring.\n\nNow assume graph $G_{\\phi}$ has a 3-coloring. Let us first rename the colors so that they match the names T, F, and N in the palette. Because all nodes of the variable gadgets are connected to N, they are all colored by T and F. To construct the assignment, let $x_{i}$ be assigned true if its node is colored with T and false if colored with F. We need to show that every clause contains a true and a false literal. Note that in a 3-coloring of a triangle, all 3 colors must appear exactly once. Thus in every clause gadget there must be a node with color F and a node with color T. Because each literal in the clause gadget is connected to its negated literal in the variable gadget, every literal colored by T must be true. Similarly, every literal colored by F must be false. Hence, every clause contains a true and a false literal.",
+      "has_solution": true,
+      "cleaned_from": "top-level",
+      "reduction_source": "NAE-3SAT",
+      "reduction_target": "3-COLORING"
+    },
+    {
+      "id": "06-028",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "CLIQUE COVER",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Show that CLIQUE COVER is NP-complete by reduction from 3COLORABLE.\n\n**Input:** A graph $G = (V, E)$ and an integer $k$.\n**Question:** Can we partition the vertices in $k$ sets such that each part forms a clique in $G$?",
+      "hint": "Choose $k = 3$.",
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3-COLORING",
+      "reduction_target": "CLIQUE COVER"
+    },
+    {
+      "id": "06-029",
+      "source_file": "06.md",
+      "source_name": "HSE Moscow -- Show that the following problems are NP-complete",
+      "title": "Final Exam Scheduling",
+      "difficulty": null,
+      "tags": [
+        "Karp21",
+        "CSP"
+      ],
+      "type": "reduction",
+      "statement": "Consider the following scheduling problem. You are given a list of final exams $F_{1}, \\dots, F_{k}$ to be scheduled, and a list of students $S_{1}, \\dots, S_{l}$. Each student is taking some specified subset of these exams. You must schedule each exam into exactly one slot such that no student is required to take two exams in the same slot. The problem is to determine if such a schedule exists that uses only $h$ slots. Formulate this problem as a language and show that it is NP-complete. *(Ex. 7.30 in Sipser)*",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "top-level",
+      "reduction_source": "3-COLORING",
+      "reduction_target": "EXAM SCHEDULING"
+    },
+    {
+      "id": "03-003a",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "SUBGRAPH ISOMORPHISM NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that the following problem is NP-COMPLETE.\n\n> **SUBGRAPH ISOMORPHISM**\n> **Instance:** Graphs $G = (V_1, E_1)$, $H = (V_2, E_2)$.\n> **Question:** Does $G$ contain a subgraph isomorphic to $H$, i.e., a subset $V \\subseteq V_1$ and a subset $E \\subseteq E_1$ such that $\\vert{}V\\vert{} = \\vert{}V_2\\vert{}$, $\\vert{}E\\vert{} = \\vert{}E_2\\vert{}$, and there exists a one-to-one function $f : V_2 \\rightarrow V$ satisfying $\\{u, v\\} \\in E_2$ if and only if $\\{f(u), f(v)\\} \\in E$?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "CLIQUE",
+      "reduction_target": "SUBGRAPH ISOMORPHISM"
+    },
+    {
+      "id": "03-003b",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "LARGEST COMMON SUBGRAPH NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that the following problem is NP-COMPLETE.\n\n> **LARGEST COMMON SUBGRAPH**\n> **Instance:** Graphs $G = (V_1, E_1)$, $H = (V_2, E_2)$, positive integer $K$.\n> **Question:** Do there exist subsets $E_1' \\subseteq E_1$ and $E_2' \\subseteq E_2$ with $\\vert{}E_1'\\vert{} = \\vert{}E_2'\\vert{} \\ge K$ such that the two subgraphs $G' = (V_1, E_1')$ and $H' = (V_2, E_2')$ are isomorphic?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "SUBGRAPH ISOMORPHISM",
+      "reduction_target": "LARGEST COMMON SUBGRAPH"
+    },
+    {
+      "id": "03-004b",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "BIN PACKING NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that BIN-PACKING is NP-complete by reduction from PARTITION.\n\n> **BIN PACKING**\n> **Instance:** Finite set $U$ of items, a size $s(u) \\in \\mathbb{Z}^+$ for each $u \\in U$, an integer bin capacity $B$, and a positive integer $K$.\n> **Question:** Is there a partition of $U$ into disjoint sets $U_1, \\dots, U_K$ such that the sum of the sizes of the items inside each $U_i$ is $B$ or less?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "PARTITION",
+      "reduction_target": "BIN PACKING"
+    },
+    {
+      "id": "03-004c",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "TILING NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that TILING is NP-complete by reduction from PARTITION.\n\n> **TILING**\n> **Instance:** Finite set $RECTS$ of rectangles and a rectangle $R$ in the plane.\n> **Question:** Is there a way of placing the rectangles of $RECTS$ inside $R$, so that no pair of the rectangles intersect, and all the rectangles have their edges parallel to the edges of $R$?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "3SAT",
+      "reduction_target": "TILING"
+    },
+    {
+      "id": "03-004d",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "HITTING SET NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that HITTING-SET is NP-complete by reduction from SET-COVER.\n\n> **HITTING SET**\n> **Instance:** A collection $C$ of subsets of a set $S$, a positive integer $K$.\n> **Question:** Does $S$ contain a hitting set for $C$ of size $K$ or less, that is, a subset $S' \\subseteq S$ with $\\vert{}S'\\vert{} \\le K$ and such that $S'$ contains at least one element from each subset in $C$?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "VERTEX COVER",
+      "reduction_target": "HITTING SET"
+    },
+    {
+      "id": "03-013c",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "Hamiltonian Path NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that HAMILTONIAN-PATH is NP-complete by reduction from HAMILTONIAN-CYCLE.\n\n> **Hamiltonian Path**\n> **Instance:** Graph $G = (V, E)$.\n> **Question:** Does $G$ contain a Hamiltonian path? (Namely a path that visits all vertices of $G$.)",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "HAMILTONIAN CYCLE",
+      "reduction_target": "HAMILTONIAN PATH"
+    },
+    {
+      "id": "03-013d",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "Max Degree Spanning Tree NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that MAX-DEGREE-SPANNING-TREE is NP-complete by reduction from HAMILTONIAN-PATH.\n\n> **Max Degree Spanning Tree**\n> **Instance:** Graph $G = (V, E)$ and integer $k$.\n> **Question:** Does $G$ contain a spanning tree $T$ where every node in $T$ is of degree at most $k$?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "HAMILTONIAN PATH",
+      "reduction_target": "MAX DEGREE SPANNING TREE"
+    },
+    {
+      "id": "03-018b",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "MULTIPROCESSOR SCHEDULING NP-Completeness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that the following problem is NP-COMPLETE:\n\n> **MULTIPROCESSOR SCHEDULING**\n> **Instance:** A finite set $A$ of \"tasks\", a \"length\" $l(a) \\in \\mathbb{Z}^+$ for each $a \\in A$, a number $m \\in \\mathbb{Z}^+$ of \"processors\", and a \"deadline\" $D \\in \\mathbb{Z}^+$.\n> **Question:** Is there a partition $A = A_1 \\cup A_2 \\cup \\dots \\cup A_m$ of $A$ into $m$ disjoint sets such that $\\max \\{\\sum_{a \\in A_i} l(a) : 1 \\le i \\le m\\} \\le D$?",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "PARTITION",
+      "reduction_target": "MULTIPROCESSOR SCHEDULING"
+    },
+    {
+      "id": "03-022e",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "r-DISK-COVER NP-Hardness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Prove that the dual problem **r-DISK-COVER** problem is NP-Hard. In this problem, given $P$ and a radius $r$, one should find the smallest number of disks of radius $r$ that cover $P$.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "DOMINATING SET",
+      "reduction_target": "R-DISK COVER"
+    },
+    {
+      "id": "03-023a",
+      "source_file": "03.md",
+      "source_name": "UIUC CS573 (2013) NP Completeness Exercises (Sariel Har-Peled)",
+      "title": "MAX SAT NP-Hardness",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Prove that MAX SAT is NP-Hard.",
+      "hint": null,
+      "solution": null,
+      "has_solution": false,
+      "cleaned_from": "manual_fix",
+      "reduction_source": "3SAT",
+      "reduction_target": "MAX SAT"
+    },
+    {
+      "id": "07-003a",
+      "source_file": "07.md",
+      "source_name": "University of Ottawa CSI 4105 Midterm",
+      "title": "3-SAT <=_P INDEPENDENT-SET",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that INDEPENDENT-SET is NP-complete by reduction from 3SAT.\n\n### Part A (10 points): $\\text{3-SAT} \\le_P \\text{INDEPENDENT-SET}$\n\nConsider the following instance for $\\text{3-SAT}$:\n$$\\phi = (\\overline{x_1} \\vee x_3 \\vee \\overline{x_4}) \\wedge (x_1 \\vee x_2 \\vee x_4)$$\n\n1. **Give the corresponding instance $(G, k)$ for the independent set problem $\\text{INDEPENDENT-SET}$:**\n2. **Give a satisfying assignment for $\\phi$ and show how it translates to an independent set:**",
+      "hint": null,
+      "solution": "**Target size:** $k = 2$\n   * **Graph description ($G$):** 6 vertices, 8 edges.\n     * Clause 1 triangle: Vertices $\\{1, 2, 3\\}$ with labels $\\overline{x_1}, x_3, \\overline{x_4}$.\n     * Clause 2 triangle: Vertices $\\{4, 5, 6\\}$ with labels $x_1, x_2, x_4$.\n     * Variable conflict edges: Connect $\\{x_1, \\overline{x_1}\\}$ (between vertex 4 and vertex 1) and $\\{x_4, \\overline{x_4}\\}$ (between vertex 6 and vertex 3).\n\n**Satisfying assignment:** $x_1 = 0, x_2 = 1, x_3 = 1, x_4 = 1$\n   * **Corresponding Independent Set of size $k = 2$:** Vertices $\\{1, 6\\}$, corresponding to choosing literal $\\overline{x_1}$ in the first triangle and literal $x_4$ in the second triangle.",
+      "has_solution": true,
+      "cleaned_from": "sub_problem",
+      "reduction_source": "3SAT",
+      "reduction_target": "INDEPENDENT SET"
+    },
+    {
+      "id": "07-003b",
+      "source_file": "07.md",
+      "source_name": "University of Ottawa CSI 4105 Midterm",
+      "title": "3-SAT <=_P DIRECTED-HAMCYCLE",
+      "difficulty": null,
+      "tags": [
+        "Karp21"
+      ],
+      "type": "reduction",
+      "statement": "Show that DIRECTED-HAMILTONIAN-CYCLE is NP-complete by reduction from 3SAT.\n\n### Part B (15 points): $\\text{3-SAT} \\le_P \\text{DIRECTED-HAMCYCLE}$\n\nUse the same instance of $\\text{3-SAT}$ as shown in Part A: $\\phi = (\\overline{x_1} \\vee x_3 \\vee \\overline{x_4}) \\wedge (x_1 \\vee x_2 \\vee x_4)$.\n\n1. **Give the corresponding instance for $\\text{DIRECTED-HAMCYCLE}$:**\n2. **Show a Hamiltonian cycle in the graph corresponding to a satisfying assignment:**",
+      "hint": null,
+      "solution": "Construction requires 4 variable paths $P_1, P_2, P_3, P_4$, each containing 9 vertices (allowing connections for clauses).\n   * For each path $P_i$, positions 3-4 are reserved for Clause 1 ($C_1$), and positions 6-7 are reserved for Clause 2 ($C_2$).\n   * Clause vertices $C_1$ and $C_2$ are connected to the corresponding positions according to the standard reduction textbook construction. Source $s$ and sink $t$ are added to link the start and end of variable paths.\n\n**Using the satisfying assignment $x_1 = 0, x_2 = 1, x_3 = 1, x_4 = 1$:**\n   * **Path order:**\n     * $s \\to$ $P_1$ traversed from **right to left** (since $x_1 = 0$), detour to pick up clause $C_1$ node $\\to$\n     * $P_2$ traversed from **left to right** (since $x_2 = 1$) $\\to$\n     * $P_3$ traversed from **left to right** (since $x_3 = 1$) $\\to$\n     * $P_4$ traversed from **left to right** (since $x_4 = 1$), detour to pick up clause $C_2$ node $\\to t \\to s$.",
+      "has_solution": true,
+      "cleaned_from": "sub_problem",
+      "reduction_source": "3SAT",
+      "reduction_target": "DIRECTED HAMILTONIAN CYCLE"
+    }
+  ],
+  "_meta": {
+    "original_total": 102,
+    "cleaned_at": "2026-08-05T07:04:33",
+    "total": 63,
+    "unique_directions": 60,
+    "unique_problems": 57
+  }
+}
