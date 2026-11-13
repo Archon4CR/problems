@@ -1,109 +1,109 @@
-# Problems 数据目录
+# Problems Data Directory
 
-## 概述
+## Overview
 
-本目录存放 Karp21 和 CSP 归约试题的原始资料、结构化抽取数据和清洗后数据，最终用于构建 NP-完全性归约 benchmark。
+This directory holds the raw materials, structured extraction data, and cleaned data for the Karp21 and CSP reduction problems, ultimately used to build an NP-completeness reduction benchmark. The problem set was compiled and curated entirely by the project author, based on publicly available university course materials.
 
-## 数据流水线
+## Data Pipeline
 
 ```
-原始 PDF (01.pdf ~ 14.pdf)
-    ↓  提取转写
-Markdown 原文 (01.md ~ 07.md，共 7 篇)
-    ↓  结构化抽取
-problems.json (102 条原始条目)
-    ↓  清洗
-problems_clean.json (64 道归约题)
+Raw PDFs (01.pdf ~ 14.pdf)
+    ↓  transcription extraction
+Markdown transcripts (01.md ~ 07.md, 7 in total)
+    ↓  structured extraction
+problems.json (102 raw entries)
+    ↓  cleaning
+problems_clean.json (64 reduction problems)
 ```
 
-## 文件说明
+## File Descriptions
 
-### 原始资料
+### Raw Materials
 
-| 文件 | 说明 |
+| File | Description |
 |---|---|
-| `sources.md` | 源文件出处、课程/机构、年份等元信息，共 25 个来源 |
-| `01.pdf` ~ `14.pdf` | 原始 PDF，其中 01~07 已转写为 md，08~14 可用性较低尚未转写 |
-| `01.md` ~ `07.md` | 从 PDF 转写的题目原文（Markdown），含陈述、提示、解答 |
+| `sources.md` | Metadata such as source file provenance, course/institution, and year — 25 sources in total |
+| `01.pdf` ~ `14.pdf` | Original PDFs; 01~07 have been transcribed to md, while 08~14 are of lower availability and have not yet been transcribed |
+| `01.md` ~ `07.md` | Problem texts transcribed from the PDFs (Markdown), containing statements, hints, and solutions |
 
-### 结构化数据
+### Structured Data
 
-| 文件 | 说明 | 条目数 |
+| File | Description | Entries |
 |---|---|---|
-| `problems.json` | LLM 抽取的原始结构化数据（全部类型） | 102 |
-| `problems_clean.json` | **最终清洗后数据**，仅含归约题，已去重补全 | 64 |
+| `problems.json` | Raw structured data extracted by an LLM (all types) | 102 |
+| `problems_clean.json` | **Final cleaned data**, containing only reduction problems, deduplicated and completed | 64 |
 
-### 文档
+### Documentation
 
-| 文件 | 说明 |
+| File | Description |
 |---|---|
-| `cleaning.md` | 完整清洗方案，含每步操作、去重决策、reduction_direction 手工补注依据 |
-| `README.md` | 本文件 |
+| `cleaning.md` | The complete cleaning plan, including per-step operations, deduplication decisions, and the rationale for the manual supplementation of reduction_direction |
+| `README.md` | This file |
 
-## 最终数据集概况
+## Final Dataset Overview
 
-`problems_clean.json` 包含 **64 道归约题**，字段结构如下：
+`problems_clean.json` contains **64 reduction problems**, with the following field structure:
 
-| 字段 | 类型 | 说明 |
+| Field | Type | Description |
 |---|---|---|
-| `id` | string | 唯一标识，格式 `XX-NNN` 或 `XX-NNNa` |
-| `source_file` | string | 来源文件名（01.md ~ 07.md） |
-| `source_name` | string | 来源课程/机构名称 |
-| `title` | string | 题目标题 |
-| `difficulty` | string\|null | 难度标注（绝大部分为 null，原始资料极少标注） |
-| `tags` | list | 标签，全部标 `Karp21`，部分同时标 `CSP` |
-| `type` | string | 固定为 `"reduction"` |
-| `statement` | string | 题目陈述（含 LaTeX 公式） |
-| `hint` | string\|null | 提示 |
-| `solution` | string\|null | 解答 |
-| `has_solution` | bool | 是否有解答 |
-| `reduction_source` | string | 归一化源问题名 |
-| `reduction_target` | string | 归一化目标问题名 |
-| `cleaned_from` | enum | 来源标记：`top-level` / `sub_problem` / `manual_fix` |
+| `id` | string | Unique identifier, in the format `XX-NNN` or `XX-NNNa` |
+| `source_file` | string | Source file name (01.md ~ 07.md) |
+| `source_name` | string | Source course/institution name |
+| `title` | string | Problem title |
+| `difficulty` | string\|null | Difficulty annotation (null for the vast majority; the raw materials rarely annotate it) |
+| `tags` | list | Tags; all tagged `Karp21`, some also tagged `CSP` |
+| `type` | string | Fixed to `"reduction"` |
+| `statement` | string | Problem statement (with LaTeX formulas) |
+| `hint` | string\|null | Hint |
+| `solution` | string\|null | Solution |
+| `has_solution` | bool | Whether a solution exists |
+| `reduction_source` | string | Normalized source problem name |
+| `reduction_target` | string | Normalized target problem name |
+| `cleaned_from` | enum | Origin marker: `top-level` / `sub_problem` / `manual_fix` |
 
-`reduction_source`、`reduction_target` 将不同来源中的同问题异名（如 `VERTEX-COVER` 与 `VERTEX COVER`、`NAE-3-SAT` 与 `NOT-ALL-EQUAL 3SAT`、`TRAVELLING SALESMAN` 与 `TSP`）统一为同一规范名称，63 道题涵盖 57 个不同问题名。
+`reduction_source` and `reduction_target` unify variant names of the same problem across different sources (e.g., `VERTEX-COVER` and `VERTEX COVER`, `NAE-3-SAT` and `NOT-ALL-EQUAL 3SAT`, `TRAVELLING SALESMAN` and `TSP`) into the same canonical name; the 63 problems cover 57 distinct problem names.
 
-### 基本统计
+### Basic Statistics
 
-| 指标 | 数值 |
+| Metric | Value |
 |---|---|
-| 总题数 | 63 |
-| 有解答 | 37 |
-| 有提示 | 16 |
-| 有归约方向 | 63（全部） |
-| 去重规范方向数 | 60 |
-| 难度非空 | 8 |
+| Total problems | 63 |
+| With solution | 37 |
+| With hint | 16 |
+| With reduction direction | 63 (all) |
+| Canonical directions after deduplication | 60 |
+| Non-null difficulty | 8 |
 
-标签分布：全部 63 道均标 `Karp21`，其中 36 道同时标 `CSP`。条目标记分布：`top-level` 50 条、`sub_problem` 2 条、`manual_fix` 11 条。
+Tag distribution: all 63 problems are tagged `Karp21`, of which 36 are also tagged `CSP`. Entry marker distribution: `top-level` 50 entries, `sub_problem` 2 entries, `manual_fix` 11 entries.
 
-### 来源分布
+### Source Distribution
 
-| 源文件 | 题数 | 来源 |
+| Source file | Problems | Source |
 |---|---|---|
 | 01.md | 7 | UCC CS4407 (2020) Problem Set |
 | 02.md | 8 | UCC CS4407 (2013) Problem Set |
-| 03.md | 15 | 多来源合集（含习题集、考试题等） |
-| 05.md | 3 | 某大学算法课习题 |
-| 06.md | 28 | HSE Moscow NP-complete 问题集 |
+| 03.md | 15 | Multi-source collection (including problem sets, exam questions, etc.) |
+| 05.md | 3 | Algorithm course exercises from a certain university |
+| 06.md | 28 | HSE Moscow NP-complete problem set |
 | 07.md | 2 | University of Ottawa CSI 4105 Midterm |
 
-### 保留的重复归约方向
+### Retained Duplicate Reduction Directions
 
-以下 3 个归约方向在数据集中出现两次（来自不同来源，且两边均有完整解答），保留原因是为 benchmark 提供同一归约的不同题目表述：
+The following 3 reduction directions appear twice in the dataset (from different sources, with a complete solution on both sides); they are retained to provide the benchmark with different problem phrasings of the same reduction:
 
-| 规范方向 | 条目 | 来源 |
+| Canonical direction | Entries | Source |
 |---|---|---|
 | `3SAT -> NAE-3SAT` | 02-004, 06-006 | UCC 2013 / HSE Moscow |
 | `HAMILTONIAN CYCLE -> TSP` | 02-008, 06-026 | UCC 2013 / HSE Moscow |
 | `VERTEX COVER -> SET COVER` | 02-007, 06-019 | UCC 2013 / HSE Moscow |
 
 
-## 清洗操作摘要
+## Cleaning Operations Summary
 
-1. **提取 reduction 类型**：从 102 条中筛出 reduction 条目，并提平 meta 父题的子题
-2. **剔除不合格条目**：容器题、误标为 reduction 的 theory 题
-3. **去重**：按归约方向检测跨文件重复，保留有解答或更完整的版本；移除 03.md 内部重复收录
-4. **补全 statement**：为仅含问题定义的短 statement 自动生成任务描述前缀
-5. **补全 reduction_direction**：根据标准 NPC 归约路径（Garey & Johnson）手工补全 11 道漏抽方向的题目
+1. **Extract reduction types**: filter the reduction entries out of the 102, and flatten the sub-problems of meta parent problems
+2. **Remove unqualified entries**: container problems and theory problems mislabeled as reduction
+3. **Deduplicate**: detect cross-file duplicates by reduction direction, keeping the version with a solution or the more complete one; remove duplicate inclusions within 03.md
+4. **Complete statements**: automatically generate a task-description prefix for short statements that contain only the problem definition
+5. **Complete reduction_direction**: manually complete the directions of the 11 problems whose directions were missed during extraction, based on standard NPC reduction paths (Garey & Johnson)
 
-详细步骤和决策依据见 [cleaning.md](cleaning.md)。
+For detailed steps and decision rationale, see [cleaning.md](cleaning.md).
